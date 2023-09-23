@@ -7,6 +7,7 @@ import com.example.Project.Request.SignUpRequest;
 import com.example.Project.Response.MessageResponse;
 import com.example.Project.Service.JWTUtil;
 import com.example.Project.Service.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +19,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 @RestController
@@ -74,5 +73,22 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("Registration Successful"));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUser(HttpServletRequest request){
+        String jwtToken = jwtUtil.getJwtFromCookies(request);
+
+        if (jwtToken != null && jwtUtil.validateJwtToken(jwtToken)) {
+            String userEmail = jwtUtil.getUserNameFromJwtToken(jwtToken);
+            Optional<User> user = userRepository.findByEmail(userEmail);
+            if (user != null) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.badRequest().body(new MessageResponse("Please Login to continue"));
+            }
+        } else {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error"));
+        }
     }
 }
