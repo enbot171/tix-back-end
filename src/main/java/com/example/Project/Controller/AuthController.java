@@ -44,7 +44,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate (new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             ResponseCookie jwtCookie = jwtUtil.generateJwtCookie(userDetails);
@@ -81,9 +82,12 @@ public class AuthController {
 
         if (jwtToken != null && jwtUtil.validateJwtToken(jwtToken)) {
             String userEmail = jwtUtil.getUserNameFromJwtToken(jwtToken);
-            Optional<User> user = userRepository.findByEmail(userEmail);
-            if (user != null) {
-                return ResponseEntity.ok(user);
+            Optional<User> optionalUser = userRepository.findByEmail(userEmail);
+            if (optionalUser.isPresent()) {
+                User user = optionalUser.get();
+                // You can create a response object or use the User entity directly
+                UserInfoResponse userInfo = new UserInfoResponse(user.getId(), user.getFullname(), user.getEmail(), user.getMobile());
+                return ResponseEntity.ok(userInfo);
             } else {
                 return ResponseEntity.badRequest().body(new MessageResponse("Please Login to continue"));
             }
