@@ -51,7 +51,7 @@ public class AuthController {
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
                     .body(new UserInfoResponse(userDetails.getId(), userDetails.getFullname(), userDetails.getEmail(), userDetails.getMobile()));
         } catch (Exception e) {
-            return ResponseEntity.ok(new MessageResponse("Error: Incorrect email or password. Type the correct email and password, and try again."));
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Incorrect email or password. Type the correct email and password, and try again."));
         }
     }
 
