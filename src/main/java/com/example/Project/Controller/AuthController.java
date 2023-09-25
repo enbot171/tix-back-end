@@ -5,6 +5,7 @@ import com.example.Project.Repository.UserRepository;
 import com.example.Project.Request.LoginRequest;
 import com.example.Project.Request.SignUpRequest;
 import com.example.Project.Response.MessageResponse;
+import com.example.Project.Response.UserInfoResponse;
 import com.example.Project.Service.JWTUtil;
 import com.example.Project.Service.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
@@ -43,13 +44,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+            Authentication authentication = authenticationManager.authenticate (new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             ResponseCookie jwtCookie = jwtUtil.generateJwtCookie(userDetails);
             return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
-                    .body(new MessageResponse("Login Successful"));
+                    .body(new UserInfoResponse(userDetails.getId(), userDetails.getFullname(), userDetails.getEmail(), userDetails.getMobile()));
         } catch (Exception e) {
             return ResponseEntity.ok(new MessageResponse("Error: Incorrect email or password. Type the correct email and password, and try again."));
         }
