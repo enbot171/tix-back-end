@@ -85,7 +85,7 @@ public class AuthController {
             Optional<User> optionalUser = userRepository.findByEmail(userEmail);
             if (optionalUser.isPresent()) {
                 User user = optionalUser.get();
-                // You can create a response object or use the User entity directly
+
                 UserInfoResponse userInfo = new UserInfoResponse(user.getId(), user.getFullname(), user.getEmail(), user.getMobile());
                 return ResponseEntity.ok(userInfo);
             } else {
