@@ -47,4 +47,60 @@ public class Event {
         this.price = price;
         this.ticketIds = new ArrayList<Ticket>(); // hello
     }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public List<Ticket> getTicketIds() {
+        return ticketIds;
+    }
+
+    public void setTicketIds(List<Ticket> ticketIds) {
+        this.ticketIds = ticketIds;
+    }
+
+    public int[] getCategories() {
+        return categories;
+    }
+
+    public void setCategories(int[] categories) {
+        this.categories = categories;
+    }
+
+    public int[] getNum_ticket_per_category() {
+        return num_ticket_per_category;
+    }
+
+    public void setNum_ticket_per_category(int[] num_ticket_per_category) {
+        this.num_ticket_per_category = num_ticket_per_category;
+    }
+
+    public float[] getPrice() {
+        return price;
+    }
+
+    public void setPrice(float[] price) {
+        this.price = price;
+    }
 }
