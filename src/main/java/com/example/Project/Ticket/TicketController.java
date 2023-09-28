@@ -62,8 +62,8 @@ public class TicketController {
     // sets boolean sold to true
     @PutMapping("/events/{eventId}/tickets/{ticketId}/sell")
     public ResponseEntity<?> sellTicket(@PathVariable(value = "eventId") ObjectId eventId,
-            @PathVariable(value = "ticketId") String ticketId, 
-                @RequestBody Ticket newTicket) {
+                                        @PathVariable(value = "ticketId") String ticketId,
+                                        @RequestBody Ticket newTicket) {
         if (!events.existsById(eventId)) {
             throw new EventNotFoundException(eventId);
         }
@@ -75,7 +75,7 @@ public class TicketController {
             }else{
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket is sold");
             }
-            
+
         }).orElseThrow(() -> new TicketNotFoundException(ticketId));
     }
 
@@ -91,15 +91,15 @@ public class TicketController {
     //         ticket.setSold(false);
     //         tickets.save(ticket);
     //         return new ResponseEntity<Ticket>(ticket, HttpStatus.OK);
-        
-            
+
+
     //     }).orElseThrow(() -> new TicketNotFoundException(ticketId));
     // }
 
     //get ticket by event ID and category
     @GetMapping("/events/{eventId}/ticketByCategory/{category}")
-    public Optional <List<Ticket>> getTicketByEventIdAndCategory(@PathVariable(value = "eventId") ObjectId eventId, 
-    @PathVariable(value = "category") int category) {
+    public Optional <List<Ticket>> getTicketByEventIdAndCategory(@PathVariable(value = "eventId") ObjectId eventId,
+                                                                 @PathVariable(value = "category") int category) {
 
         if (!events.existsById(eventId)) {
             throw new EventNotFoundException(eventId);
@@ -117,7 +117,7 @@ public class TicketController {
         return tickets.findByEventIdAndSeatNum(eventId, seat_num);
     }
 
-    // adds ticket to ticket list in Event 
+    // adds ticket to ticket list in Event
     // http body -> int seatNum, boolean sold, int category
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/events/{eventId}/tickets")
@@ -163,7 +163,7 @@ public class TicketController {
     //returning a LIST
     @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}")
     public List<Ticket> getTicketByEventNameAndCategory(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate,
-    @PathVariable(value = "category") int category) {
+                                                        @PathVariable(value = "category") int category) {
 
         Event e = events.findByNameAndDate(eventName, eventDate); //find event by name & date
         if (e == null){ throw new EventNotFoundException(eventName);}
@@ -180,12 +180,12 @@ public class TicketController {
             throw new TicketNotFoundException(eventName);
         }
     }
-    
+
     //get ticket by EventName, Date and Category
     //returning a LIST of seatnumbers
     @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats")
     public ResponseEntity<?> getTicketSeatNumberByEventNameAndCategory(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate,
-    @PathVariable(value = "category") int category) {
+                                                                       @PathVariable(value = "category") int category) {
         Event e = events.findByNameAndDate(eventName, eventDate); //find event by name & date
         if (e == null){ throw new EventNotFoundException(eventName);}
         else if (!events.existsById(e.getId())){
@@ -205,14 +205,14 @@ public class TicketController {
             throw new TicketNotFoundException(eventName);
         }
     }
-    
+
     //get ticket by event Name, Date, Category and seat number
     @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}")
     public ResponseEntity<?> getTicketByEventNameAndCategory(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate,
-    @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum) {
+                                                             @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum) {
 
         Event e = events.findByNameAndDate(eventName, eventDate); //find event by name & date
-        
+
         if (e == null){ throw new EventNotFoundException(eventName);}
         else if (!events.existsById(e.getId())){
             throw new EventNotFoundException(eventName);
@@ -225,19 +225,19 @@ public class TicketController {
         return new ResponseEntity<Ticket>(output, HttpStatus.OK);
     }
 
-    // @PutMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/cancel")
-    // public ResponseEntity<?> cancelTicket(@PathVariable(value = "eventName") String eventName, @PathVariable( value = "eventDate") String eventDate,
-    //         @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum) {
-         
-    //     Event e = events.findByNameAndDate(eventName, eventDate); //find event by name & date
-    //     if (!events.existsById(e.getId())) {
-    //         throw new EventNotFoundException(e.getId());
-    //     }
-    //     Ticket output = tickets.findByEventIdAndSeatNumAndCategory(e.getId(), seatNum, category);
-    //     output.setSold(false);
-    //     tickets.save(output);
-    //     return new ResponseEntity<Ticket>(output, HttpStatus.OK);
-    // }
+    @PutMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/cancel")
+    public ResponseEntity<?> cancelTicket(@PathVariable(value = "eventName") String eventName, @PathVariable( value = "eventDate") String eventDate,
+                                          @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum) {
+
+        Event e = events.findByNameAndDate(eventName, eventDate); //find event by name & date
+        if (!events.existsById(e.getId())) {
+            throw new EventNotFoundException(e.getId());
+        }
+        Ticket output = tickets.findByEventIdAndSeatNumAndCategory(e.getId(), seatNum, category);
+        output.setSold(false);
+        tickets.save(output);
+        return new ResponseEntity<Ticket>(output, HttpStatus.OK);
+    }
 
     // @DeleteMapping("/events/{eventId}/tickets/{ticketId}")
     // public ResponseEntity<?> deleteTicket(@PathVariable (value = "eventId") Long
@@ -253,13 +253,13 @@ public class TicketController {
     // return ResponseEntity.ok().build();
     // }).orElseThrow(() -> new TicketNotFoundException(ticketId));
     // }
-    
+
     //testing out
     @PostMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/purchase/{userId}")
     public ResponseEntity<?> purchaseTicket(@PathVariable(value = "eventName") String eventName, @PathVariable( value = "eventDate") String eventDate,
-            @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum, 
-            @PathVariable(value = "userId") String userId) {
-         
+                                            @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum,
+                                            @PathVariable(value = "userId") String userId) {
+
         Event e = events.findByNameAndDate(eventName, eventDate); //find event by name & date
         if (!events.existsById(e.getId())) {
             throw new EventNotFoundException(e.getId());
@@ -277,4 +277,6 @@ public class TicketController {
         purchaseServices.savePurchase(purchase);
         return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);
     }
+
+
 }

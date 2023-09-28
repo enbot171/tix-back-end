@@ -28,7 +28,7 @@ public class Ticket {
     private boolean sold = false;
     private int category;
     private float price;
-    
+
     //setters
     public void setId(String id) {
         this.id = id;
@@ -68,7 +68,7 @@ public class Ticket {
     public ObjectId getEventId() {
         return eventId;
     }
-    
+
 
     // @DocumentReference(lookup = "{ 'name' : ?#{Taylor Swift} }")
     private ObjectId eventId;
