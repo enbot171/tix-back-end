@@ -134,6 +134,15 @@ public class PurchaseController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchaseId);
         }
         Purchase toDelete = purchaseServices.findSinglePurchase(purchaseId);
+        Optional<Ticket> ticketOptional = tickets.findById(toDelete.getTicketId());
+        if (ticketOptional.isPresent()) {
+            Ticket ticket = ticketOptional.get();
+            ticket.setSold(false);
+            tickets.save(ticket);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket not found for purchase " + purchaseId);
+        }
+
         purchaseServices.deletePurchase(toDelete);
         return ResponseEntity.status(HttpStatus.OK).body("Purchase " + purchaseId + " deleted");
     }
