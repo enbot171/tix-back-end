@@ -74,11 +74,9 @@ public class Ticket {
     private ObjectId eventId;
 
     public Ticket(){}
-    public Ticket(int seatNum, boolean sold, int category, float price, ObjectId eventId){
+    public Ticket(int seatNum, boolean sold, int category){
         this.category = category;
         this.seatNum = seatNum;
         this.sold = sold;
-        this.price = price;
-        this.eventId = eventId;
     }
 }
