@@ -10,11 +10,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @SpringBootTest
 public class SignUpTest {
@@ -36,16 +38,13 @@ public class SignUpTest {
     @Test
     public void testRegisterUserWithEmailExists() {
         // Arrange ***
-        SignUpRequest signUpRequest = new SignUpRequest("Bob", "bob@gmail.com", "80808080", "password");
+        SignUpRequest signUpRequest = new SignUpRequest("Bob", "bob123@gmail.com", "80808080", "password");
 
+        // Configure the mock UserRepository to return true when existsByEmail is called with an existing email
+        Mockito.when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
         // Act ***
-        //inserts first signup into db
-        authController.registerUser(signUpRequest);
-        
-        //tries to signup using existing email
         ResponseEntity<?> responseEntity = authController.registerUser(signUpRequest);
-        
 
         // Assert ***
         MessageResponse expectedResponse = new MessageResponse("Error: Email is already in use");
