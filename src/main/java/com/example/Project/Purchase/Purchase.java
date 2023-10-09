@@ -51,13 +51,13 @@ public class Purchase {
     public Purchase(){}
 
     public Purchase(String id, String userId, String ticketId, LocalDateTime purchaseDate,
-            float totalPrice) {
+                    float totalPrice) {
         this.id = id;
         this.userId = userId;
         this.ticketId = ticketId;
         this.purchaseDate = purchaseDate;
         this.totalPrice = totalPrice;
     }
-    
-    
+
+
 }

@@ -7,12 +7,7 @@ import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.Project.Entity.User;
 import com.example.Project.Event.Event;
@@ -23,10 +18,10 @@ import com.example.Project.Ticket.TicketNotFoundException;
 import com.example.Project.Ticket.TicketRepository;
 
 @RestController
-@RequestMapping("api/v1/")
 @CrossOrigin(origins = "*")
+@RequestMapping("api/v1/")
 public class PurchaseController {
-    
+
     @Autowired
     private PurchaseService purchaseServices;
     @Autowired
@@ -61,10 +56,16 @@ public class PurchaseController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + ticket.getEventId());
         }
 
-            return new ResponseEntity<String>("Event Name: " + event.getName() + "\nEvent Date: " + event.getDate() 
-                                            + "\nTicket ID: " + ticket.getId() + "\nTicket Price: $" +ticket.getPrice()
-                                                + "\nCategory:  " + ticket.getCategory()  + "\nSeat Number: " + ticket.getSeatNum()
-                                                    , HttpStatus.OK);
+        User user = userRepo.findById(purchase.getUserId()).get();
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchase.getUserId());
+        }
+
+        PurchaseInfoResponse purchaseInfo = new PurchaseInfoResponse(purchase.getId(), user.getId(), user.getFullname(),
+                user.getEmail(), event.getName(), event.getDate(), ticket.getId(), ticket.getPrice(),
+                ticket.getCategory(), ticket.getSeatNum());
+
+        return new ResponseEntity<PurchaseInfoResponse>(purchaseInfo, HttpStatus.OK);
     }
 
     //find purchase by purchase id
@@ -83,13 +84,19 @@ public class PurchaseController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + ticket.getEventId());
         }
 
-        return new ResponseEntity<String>("Event Name: " + event.getName() + "\nEvent Date: " + event.getDate() 
-                                            + "\nTicket ID: " + ticket.getId() + "\nTicket Price: $" +ticket.getPrice()
-                                                + "\nCategory:  " + ticket.getCategory()  + "\nSeat Number: " + ticket.getSeatNum()
-                                                    , HttpStatus.OK);
+        User user = userRepo.findById(purchase.getUserId()).get();
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchase.getUserId());
+        }
+
+        PurchaseInfoResponse purchaseInfo = new PurchaseInfoResponse(purchase.getId(), user.getId(), user.getFullname(),
+                user.getEmail(), event.getName(), event.getDate(), ticket.getId(), ticket.getPrice(),
+                ticket.getCategory(), ticket.getSeatNum());
+
+        return new ResponseEntity<PurchaseInfoResponse>(purchaseInfo, HttpStatus.OK);
     }
 
-    //find purchase by user ID
+    //find list of purchases by user ID
     @GetMapping("/purchases/byUserId/{userId}")
     public ResponseEntity<?> userPurchase(@PathVariable (value = "userId") String userId){
         Optional<User> userOpt = userRepo.findById(userId);
@@ -102,11 +109,11 @@ public class PurchaseController {
         }
         return new ResponseEntity<List<Purchase>>(purchaseList, HttpStatus.OK);
     }
-    
+
     //find specific ticket bought by user id, event name and date
     @GetMapping("/purchases/{userId}/{eventName}/{eventDate}")
-    public ResponseEntity<?> userTicketPurchase(@PathVariable (value = "userId") String userId, @PathVariable (value = "eventName") String eventName, 
-    @PathVariable (value = "eventDate") String eventDate){
+    public ResponseEntity<?> userTicketPurchase(@PathVariable (value = "userId") String userId, @PathVariable (value = "eventName") String eventName,
+                                                @PathVariable (value = "eventDate") String eventDate){
         Optional<User> userOpt = userRepo.findById(userId);
         if(!userOpt.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User ID does not exist" + userId);
@@ -117,7 +124,7 @@ public class PurchaseController {
         }
         Purchase purchase = purchaseServices.findByEventNameDateAndUserId(event, userId);
         return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);
-    
+
     }
 
     //delete purchases
@@ -127,6 +134,15 @@ public class PurchaseController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchaseId);
         }
         Purchase toDelete = purchaseServices.findSinglePurchase(purchaseId);
+        Optional<Ticket> ticketOptional = tickets.findById(toDelete.getTicketId());
+        if (ticketOptional.isPresent()) {
+            Ticket ticket = ticketOptional.get();
+            ticket.setSold(false);
+            tickets.save(ticket);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket not found for purchase " + purchaseId);
+        }
+
         purchaseServices.deletePurchase(toDelete);
         return ResponseEntity.status(HttpStatus.OK).body("Purchase " + purchaseId + " deleted");
     }
