@@ -5,6 +5,11 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.Project.QueueService.BuyingQueue;
+import com.example.Project.QueueService.WaitingQueue;
+import com.example.Project.User.User;
+import com.example.Project.User.UserRepository;
+
 // import com.example.Ticketing.Ticket.Ticket;
 
 import org.bson.types.ObjectId;
@@ -18,6 +23,23 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
+    @Autowired
+    private UserRepository userRepo;
+
+    @Autowired
+    private WaitingQueue queueService;
+
+    @Autowired
+    private BuyingQueue buyList;
+
+    /*
+     * Checking if the automation works
+     */
+    @GetMapping("/buyList")
+    public int checkQueueList(){
+        return buyList.getSize();
+    }
+
     //find all events
     @GetMapping("/events")
     public ResponseEntity<List<Event>> getAllEvents() {
@@ -27,6 +49,34 @@ public class EventController {
     @GetMapping("/events/getEventById/{id}")
     public ResponseEntity<Optional<Event>> getSingleEvent(@PathVariable(value = "id") ObjectId id) {
         return new ResponseEntity<Optional<Event>>(eventService.singleEvent(id), HttpStatus.OK);
+    }
+
+    /*
+     * Throwing user to buying Queue or Waiting Queue when they click buy button
+     */
+    @PostMapping("/buy/{userId}")
+    public ResponseEntity<String> addToWaitingList(@PathVariable(value = "userId") String userId){
+        Optional<User> userOptional = userRepo.findById(userId);
+        if(userOptional.isPresent()){
+            User cfmUser = userOptional.get();
+
+            if(!queueService.contains(cfmUser.getId())){
+
+                queueService.addUsers(cfmUser.getId());
+
+                return ResponseEntity.status(HttpStatus.OK).body("User added to waiting room.");
+            
+            }else{
+
+                return ResponseEntity.status(HttpStatus.OK).body("User already in the waiting room.");
+            }
+        }
+        
+        
+        // System.out.println(queueService.getNextUserId());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        
+
     }
 
     /*-------------------------------- Find by Event Name, Date ---------------------------------------- */

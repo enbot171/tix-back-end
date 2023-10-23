@@ -1,9 +1,5 @@
-package com.example.Project.Service;
+package com.example.Project.User;
 
-//User Details Immplementation (Used to build the user)
-// Username = email
-
-import com.example.Project.Entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

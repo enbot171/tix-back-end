@@ -1,10 +1,9 @@
-package com.example.Project.Repository;
+package com.example.Project.User;
 
 //User Repo
 
 import java.util.Optional;
 
-import com.example.Project.Entity.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

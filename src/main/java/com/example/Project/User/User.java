@@ -1,4 +1,4 @@
-package com.example.Project.Entity;
+package com.example.Project.User;
 
 //User Entity
 

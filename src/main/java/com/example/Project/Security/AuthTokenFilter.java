@@ -5,8 +5,6 @@ package com.example.Project.Security;
 
 import java.io.IOException;
 
-import com.example.Project.Service.JWTUtil;
-import com.example.Project.Service.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.example.Project.User.JWTUtil;
+import com.example.Project.User.UserDetailsServiceImpl;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired

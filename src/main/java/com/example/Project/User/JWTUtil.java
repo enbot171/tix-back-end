@@ -1,4 +1,4 @@
-package com.example.Project.Service;
+package com.example.Project.User;
 
 //JWT Token
 // Username = email

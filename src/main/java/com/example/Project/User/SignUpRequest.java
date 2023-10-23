@@ -1,4 +1,4 @@
-package com.example.Project.Request;
+package com.example.Project.User;
 
 // Sign Up input from user
 

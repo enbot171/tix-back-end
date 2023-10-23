@@ -1,13 +1,5 @@
-package com.example.Project.Controller;
+package com.example.Project.User;
 
-import com.example.Project.Entity.User;
-import com.example.Project.Repository.UserRepository;
-import com.example.Project.Request.LoginRequest;
-import com.example.Project.Request.SignUpRequest;
-import com.example.Project.Response.MessageResponse;
-import com.example.Project.Response.UserInfoResponse;
-import com.example.Project.Service.JWTUtil;
-import com.example.Project.Service.UserDetailsImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 

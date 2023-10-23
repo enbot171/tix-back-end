@@ -1,24 +1,16 @@
 package com.example.Project.Ticket;
 
 import org.bson.types.ObjectId;
-// import javax.persistence.*;
-// import javax.validation.constraints.*;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-// import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import com.example.Project.Event.Event;
 
-// import com.example.Ticketing.Event.Event;
 import lombok.*;
 
-// @Getter
-// @Setter
 @ToString
-//  @AllArgsConstructor
-//  @NoArgsConstructor
 @EqualsAndHashCode
 @Document(collection = "ticket")
 public class Ticket {
