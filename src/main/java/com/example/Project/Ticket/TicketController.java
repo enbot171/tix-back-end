@@ -20,7 +20,6 @@ import com.example.Project.Event.Event;
 import com.example.Project.Event.EventNotFoundException;
 import com.example.Project.Event.EventRepository;
 import com.example.Project.Purchase.Purchase;
-import com.example.Project.Purchase.PurchaseRepository;
 import com.example.Project.Purchase.PurchaseService;
 
 @RestController

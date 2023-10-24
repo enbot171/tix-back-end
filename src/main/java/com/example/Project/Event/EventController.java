@@ -1,11 +1,9 @@
 package com.example.Project.Event;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Project.QueueService.BuyingQueue;
 import com.example.Project.QueueService.WaitingQueue;
 import com.example.Project.User.User;
 import com.example.Project.User.UserRepository;

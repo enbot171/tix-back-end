@@ -7,8 +7,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
-import com.example.Project.Event.Event;
-
 @Service
 public class WaitingQueue{
 
