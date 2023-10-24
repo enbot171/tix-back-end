@@ -1,41 +1,52 @@
 package com.example.Project.QueueService;
 
-import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
+
+import com.example.Project.Event.Event;
 
 @Service
 public class WaitingQueue{
 
-    private Queue<String> waitingRoom = new ConcurrentLinkedQueue<>();
+    private final ConcurrentHashMap<ObjectId, Queue<String>> waitingRooms = new ConcurrentHashMap<>();
 
     //functions
-    public void addUsers(String userId){
-        waitingRoom.add(userId);
+    public void addUsers(ObjectId eventId, String userId){
+        waitingRooms.computeIfAbsent(eventId, k -> new ConcurrentLinkedQueue<>())
+        .add(userId);
     }
 
-    public String getNextUserId(){
-        return waitingRoom.poll();
-    }
-
-    public boolean isEmpty(){
-        return waitingRoom.isEmpty();
-    }
-
-    public boolean contains(String userId) {
-
-        for(String Ids : waitingRoom){
-
-            if(Ids.equals(userId)){
-                return true;
-            }
+    public String getNextUserId(ObjectId eventId){
+        Queue<String> eventQueue = waitingRooms.get(eventId);
+        if(eventQueue == null){
+            return null;
         }
-        return false;
+        return eventQueue.poll();
     }
 
-    public void removeUser(String userId){
-        waitingRoom.remove(userId);
+    public boolean isEmpty(ObjectId eventId){
+        Queue<String> eventQueue = waitingRooms.get(eventId);
+        return eventQueue == null || eventQueue.isEmpty();
+    }
+
+    public boolean contains(ObjectId eventId, String userId) {
+        Queue<String> eventQueue = waitingRooms.get(eventId);
+        return eventQueue != null && eventQueue.contains(userId);
+    }
+
+    public void removeUser(ObjectId eventId, String userId){
+       Queue<String> eventQueue = waitingRooms.get(eventId);
+        if(eventQueue != null){
+            eventQueue.remove(userId);
+        }
+    }
+
+    public int getSize(ObjectId eventId){
+        Queue<String> eventQueue = waitingRooms.get(eventId);
+        return eventQueue == null ? 0 : eventQueue.size();
     }
 }

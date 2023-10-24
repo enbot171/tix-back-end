@@ -29,16 +29,20 @@ public class EventController {
     @Autowired
     private WaitingQueue queueService;
 
-    @Autowired
-    private BuyingQueue buyList;
+    // @Autowired
+    // private BuyingQueue buyList;
 
-    /*
-     * Checking if the automation works
-     */
-    @GetMapping("/buyList")
-    public int checkQueueList(){
-        return buyList.getSize();
-    }
+    // /*
+    //  * Checking if the automation works
+    //  */
+    // @GetMapping("/buyList")
+    // public int checkBuyList(){
+    //     return buyList.getSize();
+    // }
+    // @GetMapping("/queue")
+    // public int checkQueueList(String eventId){
+    //     return queueService.getSize(eventId);
+    // }
 
     //find all events
     @GetMapping("/events")
@@ -54,15 +58,20 @@ public class EventController {
     /*
      * Throwing user to buying Queue or Waiting Queue when they click buy button
      */
-    @PostMapping("/buy/{userId}")
-    public ResponseEntity<String> addToWaitingList(@PathVariable(value = "userId") String userId){
+    @PostMapping("/buy/{userId}/{eventName}/{eventDate}")
+    public ResponseEntity<String> addToWaitingList(@PathVariable(value = "userId") String userId,
+        @PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate ){
         Optional<User> userOptional = userRepo.findById(userId);
         if(userOptional.isPresent()){
             User cfmUser = userOptional.get();
+            if(cfmUser == null){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+            }
+            Event event = eventService.findByNameAndDate(eventName, eventDate);
 
-            if(!queueService.contains(cfmUser.getId())){
+            if(!queueService.contains(event.getId(), cfmUser.getId())){
 
-                queueService.addUsers(cfmUser.getId());
+                queueService.addUsers(event.getId(), cfmUser.getId());
 
                 return ResponseEntity.status(HttpStatus.OK).body("User added to waiting room.");
             

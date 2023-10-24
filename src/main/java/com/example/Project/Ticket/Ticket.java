@@ -20,6 +20,7 @@ public class Ticket {
     private boolean sold = false;
     private int category;
     private float price;
+    private ObjectId eventId;
 
     //setters
     public void setId(String id) {
@@ -60,10 +61,6 @@ public class Ticket {
     public ObjectId getEventId() {
         return eventId;
     }
-
-
-    // @DocumentReference(lookup = "{ 'name' : ?#{Taylor Swift} }")
-    private ObjectId eventId;
 
     public Ticket(){}
     public Ticket(int seatNum, boolean sold, int category){
