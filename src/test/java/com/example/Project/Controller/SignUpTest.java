@@ -4,7 +4,6 @@ package com.example.Project.Controller;
 import com.example.Project.User.AuthController;
 import com.example.Project.User.MessageResponse;
 import com.example.Project.User.SignUpRequest;
-import com.example.Project.User.User;
 import com.example.Project.User.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;

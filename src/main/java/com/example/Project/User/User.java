@@ -29,12 +29,15 @@ public class User {
     @NotBlank @Size(min = 8, max = 30)
     private String password;
 
+    private boolean inBuySet;
+
 
     public User(String fullname, String email, String mobile, String password) {
         this.fullname = fullname;
         this.email = email;
         this.mobile = mobile;
         this.password = password;
+        this.inBuySet = false;
     }
 
     public String getId() {
@@ -76,4 +79,12 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public boolean getInBuySet() {
+        return inBuySet;
+    }
+    public void setInBuySet(boolean x) {
+        this.inBuySet = x;
+    }
+
 }
