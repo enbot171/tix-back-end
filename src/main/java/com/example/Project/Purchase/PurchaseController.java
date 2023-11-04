@@ -9,10 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Project.Entity.User;
+import com.example.Project.User.User;
 import com.example.Project.Event.Event;
 import com.example.Project.Event.EventRepository;
-import com.example.Project.Repository.UserRepository;
+import com.example.Project.User.UserRepository;
 import com.example.Project.Ticket.Ticket;
 import com.example.Project.Ticket.TicketNotFoundException;
 import com.example.Project.Ticket.TicketRepository;

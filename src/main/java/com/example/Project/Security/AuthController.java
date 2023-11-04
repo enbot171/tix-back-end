@@ -1,7 +1,7 @@
-package com.example.Project.Controller;
+package com.example.Project.Security;
 
-import com.example.Project.Entity.User;
-import com.example.Project.Repository.UserRepository;
+import com.example.Project.User.User;
+import com.example.Project.User.UserRepository;
 import com.example.Project.Request.LoginRequest;
 import com.example.Project.Request.SignUpRequest;
 import com.example.Project.Response.MessageResponse;
