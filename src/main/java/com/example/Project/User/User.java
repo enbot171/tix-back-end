@@ -29,6 +29,11 @@ public class User {
     @NotBlank @Size(min = 8, max = 30)
     private String password;
 
+    @NotBlank 
+    private String verificationCode; 
+
+    private boolean isVerified;
+
     private boolean inBuySet;
 
 
@@ -78,6 +83,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getVerificationCode() {
+        return verificationCode;
+    }
+
+    public void setVerificationCode(String verificationCode) {
+        this.verificationCode = verificationCode;
+    }
+
+    public boolean getVerificationStatus() {
+        return isVerified;
+    }
+
+    public void setVerificationStatus(boolean isVerified) {
+        this.isVerified = isVerified;
     }
 
     public boolean getInBuySet() {

@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.Project.Email.EmailSenderServiceImpl;
 import com.example.Project.Event.Event;
 import com.example.Project.Event.EventNotFoundException;
 import com.example.Project.Event.EventRepository;
@@ -21,6 +22,7 @@ import com.example.Project.Purchase.Purchase;
 import com.example.Project.Purchase.PurchaseService;
 import com.example.Project.QueueService.BuyingQueueService;
 import com.example.Project.QueueService.WaitingQueueService;
+import com.example.Project.User.MessageResponse;
 import com.example.Project.User.User;
 import com.example.Project.User.UserRepository;
 import com.example.Project.Websocket.MessageService;
@@ -46,6 +48,8 @@ public class TicketController {
     private WaitingQueueService waitService;
     @Autowired
     private MessageService messageServices;
+    @Autowired
+    private EmailSenderServiceImpl emailService;
 
     public TicketController(TicketRepository tickets, EventRepository events, PurchaseService purchaseServices) {
         this.tickets = tickets;
@@ -276,6 +280,20 @@ public class TicketController {
         buyService.removeUser(eventName, userId);
         user.setInBuySet(false);
         userRepo.save(user);
+
+        //send user an email with his purchased tickets, 1 ticket per email
+        try {
+            emailService.sendPurchaseEmail(user, purchase.getId());
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email sent unsuccessfully."));
+        }
+
+        //send user an email with his purchased tickets, 1 ticket per email
+        try {
+            emailService.sendPurchaseEmail(user, purchase.getId());
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email sent unsuccessfully."));
+        }
 
         if (buyService.isFull(eventName)){
             return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);

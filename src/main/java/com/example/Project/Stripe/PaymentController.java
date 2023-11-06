@@ -2,8 +2,6 @@ package com.example.Project.Stripe;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-
 import com.stripe.model.Charge;
 
 @RestController

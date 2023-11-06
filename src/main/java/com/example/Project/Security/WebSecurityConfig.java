@@ -75,11 +75,10 @@ public class WebSecurityConfig{
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/v1/auth/**").permitAll()
-//                                .requestMatchers("/api/v1/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/purchase/{userId}").permitAll()
-//                                .requestMatchers("/api/v1/purchases/**").permitAll()
+                                .requestMatchers("/api/v1/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/purchase/{userId}").permitAll()
+                                .requestMatchers("/api/v1/purchases/**").permitAll()
+                                .requestMatchers("/api/v1/send-email").permitAll()
                                 .anyRequest().permitAll()
-                                // .requestMatchers("/api/v1/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/purchase/{userId}").permitAll()
-                                // .requestMatchers("/api/v1/purchases/**").permitAll()
                 );
 
         http.authenticationProvider(authenticationProvider());
