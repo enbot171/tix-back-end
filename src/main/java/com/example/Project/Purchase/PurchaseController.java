@@ -42,10 +42,11 @@ public class PurchaseController {
     public ResponseEntity<List<Purchase>> getAllPurchases() {
         return new ResponseEntity<List<Purchase>>(purchaseServices.findAll(), HttpStatus.OK);
     }
+  
+    //find purchase by ticket id
+    @GetMapping("/purchases/byTicketId/{ticketId}") //{ticketId}/getSinglePurchaseByTicketId
+    public ResponseEntity<?> getSinglePurchaseByTicketId(@PathVariable (value = "ticketId") String ticketId){
 
-    // find purchase by ticket id
-    @GetMapping("/purchases/byTicketId/{ticketId}")
-    public ResponseEntity<?> getSinglePurchaseByTicketId(@PathVariable(value = "ticketId") String ticketId) {
         Ticket ticket = tickets.findById(ticketId).get();
         if (ticket == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket ID: " + ticketId + " does not exist.");
