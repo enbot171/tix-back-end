@@ -1,9 +1,5 @@
-package com.example.Project.Service;
+package com.example.Project.User;
 
-//Load user details by finding him from his email
-
-import com.example.Project.Entity.User;
-import com.example.Project.Repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

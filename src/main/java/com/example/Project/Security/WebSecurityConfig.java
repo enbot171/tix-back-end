@@ -2,9 +2,8 @@ package com.example.Project.Security;
 
 //Security Configuration to handle Tokens & Passwords
 
-import com.example.Project.Security.AuthEntryPointJwt;
-import com.example.Project.Security.AuthTokenFilter;
-import com.example.Project.Service.UserDetailsServiceImpl;
+import com.example.Project.User.UserDetailsServiceImpl;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,8 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-
 import java.util.Arrays;
 
 
@@ -78,8 +75,8 @@ public class WebSecurityConfig{
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/api/v1/auth/**").permitAll()
-                                .requestMatchers("/api/v1/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/purchase/{userId}").permitAll()
-                                .requestMatchers("/api/v1/purchases/**").permitAll()
+                                // .requestMatchers("/api/v1/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/purchase/{userId}").permitAll()
+                                // .requestMatchers("/api/v1/purchases/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 

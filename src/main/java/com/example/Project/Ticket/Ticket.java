@@ -1,24 +1,13 @@
 package com.example.Project.Ticket;
 
 import org.bson.types.ObjectId;
-// import javax.persistence.*;
-// import javax.validation.constraints.*;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-// import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
-import com.example.Project.Event.Event;
-
-// import com.example.Ticketing.Event.Event;
 import lombok.*;
 
-// @Getter
-// @Setter
 @ToString
-//  @AllArgsConstructor
-//  @NoArgsConstructor
 @EqualsAndHashCode
 @Document(collection = "ticket")
 public class Ticket {
@@ -28,6 +17,7 @@ public class Ticket {
     private boolean sold = false;
     private int category;
     private float price;
+    private ObjectId eventId;
 
     //setters
     public void setId(String id) {
@@ -68,10 +58,6 @@ public class Ticket {
     public ObjectId getEventId() {
         return eventId;
     }
-
-
-    // @DocumentReference(lookup = "{ 'name' : ?#{Taylor Swift} }")
-    private ObjectId eventId;
 
     public Ticket(){}
     public Ticket(int seatNum, boolean sold, int category){
