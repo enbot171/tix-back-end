@@ -3,19 +3,17 @@ package com.example.Project.Purchase;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.Project.Entity.User;
 import com.example.Project.Event.Event;
 import com.example.Project.Event.EventRepository;
-import com.example.Project.Repository.UserRepository;
 import com.example.Project.Ticket.Ticket;
-import com.example.Project.Ticket.TicketNotFoundException;
 import com.example.Project.Ticket.TicketRepository;
+import com.example.Project.User.User;
+import com.example.Project.User.UserRepository;
 
 @RestController
 @CrossOrigin(origins = "*")

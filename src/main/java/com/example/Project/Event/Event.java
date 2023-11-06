@@ -2,17 +2,11 @@ package com.example.Project.Event;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import java.util.*;
 import com.example.Project.Ticket.Ticket;
 
 @Document(collection = "event")
-// @Getter
-// @Setter
-// @AllArgsConstructor
-// @NoArgsConstructor
 public class Event {
     @Id
     private ObjectId id;
@@ -80,6 +74,6 @@ public class Event {
         this.categories = categories;
         this.num_ticket_per_category = num_ticket_per_category;
         this.price = price;
-        this.ticketIds = new ArrayList<Ticket>(); // hello
+        this.ticketIds = new ArrayList<Ticket>(); 
     }
 }

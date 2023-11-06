@@ -1,31 +1,51 @@
-package com.example.Project.Request;
+package com.example.Project.User;
 
-// Sign Up input from user
+//User Entity
+
+import lombok.Data;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class SignUpRequest {
-    @NotBlank
-    @Size(max = 20)
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@Document(collection = "users")
+public class User {
+    @Id
+    private String id;
+
+    @NotBlank @Size(max = 20)
     private String fullname;
 
-    @Email
-    @NotBlank @Size(max = 50)
+    @Email @NotBlank @Size(max = 50)
     private String email;
 
     @NotBlank @Size (max = 20)
     private String mobile;
 
-    @NotBlank @Size(min = 6, max = 30)
+    @NotBlank @Size(min = 8, max = 30)
     private String password;
 
-    public SignUpRequest(String fullname, String email, String mobile, String password) {
+    private boolean inBuySet;
+
+
+    public User(String fullname, String email, String mobile, String password) {
         this.fullname = fullname;
         this.email = email;
         this.mobile = mobile;
         this.password = password;
+        this.inBuySet = false;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFullname() {
@@ -59,4 +79,12 @@ public class SignUpRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public boolean getInBuySet() {
+        return inBuySet;
+    }
+    public void setInBuySet(boolean x) {
+        this.inBuySet = x;
+    }
+
 }

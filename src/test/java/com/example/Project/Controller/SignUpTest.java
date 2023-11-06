@@ -1,10 +1,10 @@
 package com.example.Project.Controller;
 
 
-import com.example.Project.Entity.User;
-import com.example.Project.Repository.UserRepository;
-import com.example.Project.Request.SignUpRequest;
-import com.example.Project.Response.MessageResponse;
+import com.example.Project.User.AuthController;
+import com.example.Project.User.MessageResponse;
+import com.example.Project.User.SignUpRequest;
+import com.example.Project.User.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
