@@ -255,7 +255,7 @@ public class TicketController {
     // }
 
     //testing out
-    @PostMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/purchase/{userId}")
+    @PostMapping("/events/{eventName}/{eventDate}/{category}/{seatNum}/{userId}")
     public ResponseEntity<?> purchaseTicket(@PathVariable(value = "eventName") String eventName, @PathVariable( value = "eventDate") String eventDate,
                                             @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum,
                                             @PathVariable(value = "userId") String userId) {
