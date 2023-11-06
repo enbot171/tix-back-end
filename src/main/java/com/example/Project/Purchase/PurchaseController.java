@@ -39,7 +39,7 @@ public class PurchaseController {
         return new ResponseEntity<List<Purchase>>(purchaseServices.findAll(), HttpStatus.OK);
     }
     //find purchase by ticket id
-    @GetMapping("/purchases/byTicketId/{ticketId}")
+    @GetMapping("/purchases/byTicketId/{ticketId}") //{ticketId}/getSinglePurchaseByTicketId
     public ResponseEntity<?> getSinglePurchaseByTicketId(@PathVariable (value = "ticketId") String ticketId){
         Ticket ticket = tickets.findById(ticketId).get();
         if(ticket == null){
