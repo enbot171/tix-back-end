@@ -21,15 +21,21 @@ public class UserDetailsImpl implements UserDetails {
 
     private String password;
 
+    private String verificationCode;
+
+    private boolean isVerified;
+
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(String id, String fullname, String email, String mobile, String password,
+    public UserDetailsImpl(String id, String fullname, String email, String mobile, String password, String verificationCode, boolean isVerified,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.fullname = fullname;
         this.email = email;
         this.mobile = mobile;
         this.password = password;
+        this.verificationCode = verificationCode;
+        this.isVerified = isVerified;
         this.authorities = authorities;
     }
 
@@ -43,6 +49,8 @@ public class UserDetailsImpl implements UserDetails {
                 user.getEmail(),
                 user.getMobile(),
                 user.getPassword(),
+                user.getVerificationCode(),
+                user.getVerificationStatus(),
                 authorities);
     }
 
@@ -72,6 +80,14 @@ public class UserDetailsImpl implements UserDetails {
         return password;
     }
 
+    public String getVerification() {
+        return verificationCode;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
     @Override // Username returns the email
     public String getUsername() {
         return email;
@@ -94,6 +110,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
+        // return isVerified;
         return true;
     }
 

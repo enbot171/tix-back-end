@@ -22,4 +22,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return UserDetailsImpl.build(user);
     }
 
+    // Finds user by verification code to check he has verified
+    public boolean verified(String verificationCode) {
+        User user = userRepository.findByVerificationCode(verificationCode);
+
+        if (user == null || user.isVerified()) {
+            return false;
+        } else {
+            user.setVerificationCode(null);
+            user.setVerificationStatus(true);
+            userRepository.save(user);
+            return true;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.Project.Purchase;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,8 @@ import com.example.Project.Ticket.Ticket;
 import com.example.Project.Ticket.TicketRepository;
 import com.example.Project.User.User;
 import com.example.Project.User.UserRepository;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -143,5 +146,16 @@ public class PurchaseController {
 
         purchaseServices.deletePurchase(toDelete);
         return ResponseEntity.status(HttpStatus.OK).body("Purchase " + purchaseId + " deleted");
+    }
+
+    // generate pdf
+    @GetMapping("/purchases/{purchaseID}/pdf")
+    public void generatePDF(HttpServletResponse response, @PathVariable(value = "purchaseID") String purchaseID) throws IOException {
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=ticket.pdf";
+        response.setHeader(headerKey, headerValue);
+
+        this.purchaseServices.export(response, purchaseID);
     }
 }

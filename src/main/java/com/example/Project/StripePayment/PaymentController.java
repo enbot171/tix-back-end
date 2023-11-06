@@ -1,25 +1,42 @@
-// package com.example.Project.StripePayment;
+package com.example.Project.StripePayment;
 
-// import org.springframework.beans.factory.annotation.Value;
-// import org.springframework.ui.Model;
-// import org.springframework.web.bind.annotation.GetMapping;
-// import org.springframework.web.bind.annotation.RequestParam;
-// import org.springframework.web.bind.annotation.RestController;
+import com.stripe.model.Charge;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-// @RestController
-// public class PaymentController {
+@RestController
+// @CrossOrigin("*")
+@RequestMapping("/api/v1/payment")
+public class PaymentController {
     
-//     @Value("$(STRIPE_PUBLIC_KEY)")
-//     private String stripePublicKey;
+    private StripeClient stripeClient;
 
+    @Autowired
+    PaymentController(StripeClient stripeClient) {
+        this.stripeClient = stripeClient;
+    }
+    
+    @PostMapping("/charge")
+    public ResponseEntity<ChargeResponse> chargeCard(@RequestBody ChargeRequest chargeRequest) {
+        try{
+            Charge charge = stripeClient.chargeNewCard(chargeRequest.getToken(), chargeRequest.getAmount());
 
-//     @GetMapping("/checkout")
-//     public String checkout(Model model, @RequestParam(required = true ) String userId, @RequestParam(required = true) Integer amount){
-//         model.addAttribute("amount", amount*100);
-//         model.addAttribute("stripePublicKey", stripePublicKey);
-//         model.addAttribute("Currency", "USD");
-//         model.addAttribute("userId", userId);
+            ChargeResponse response = new ChargeResponse();
+            response.setSuccess(true);
+            response.setMessage("Payment Successful! Charge ID : " + charge.getId());
+            response.setChargeId(charge.getId());
 
-//         return "checkout";
-//     }
-// }
+            return ResponseEntity.ok(response);
+
+        } catch(Exception e){
+
+            ChargeResponse response = new ChargeResponse();
+            response.setSuccess(false);
+            response.setMessage("Payment failed : " + e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+}
