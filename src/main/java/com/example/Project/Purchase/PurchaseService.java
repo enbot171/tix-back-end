@@ -2,6 +2,7 @@ package com.example.Project.Purchase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,16 +14,20 @@ import com.example.Project.Ticket.Ticket;
 import com.example.Project.Ticket.TicketRepository;
 import com.example.Project.User.User;
 import com.example.Project.User.UserRepository;
-import com.lowagie.text.Cell;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.lowagie.text.Document;
 import com.lowagie.text.Font;
 import com.lowagie.text.FontFactory;
+import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Table;
-import com.lowagie.text.alignment.HorizontalAlignment;
 import com.lowagie.text.pdf.PdfWriter;
-import java.awt.Color;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 @Service
@@ -32,18 +37,19 @@ public class PurchaseService {
     @Autowired
     private TicketRepository tickets;
     @Autowired
-    private EventRepository events;
-    @Autowired
     private UserRepository users;
+    @Autowired
+    private EventRepository events;
 
-    public void savePurchase(Purchase purchase){
+    public void savePurchase(Purchase purchase) {
         purchaseRepo.save(purchase);
     }
 
     public List<Purchase> findAll() {
         return purchaseRepo.findAll();
     }
-    public Purchase findSinglePurchase(String purchaseId){
+
+    public Purchase findSinglePurchase(String purchaseId) {
         return purchaseRepo.findById(purchaseId).get();
     }
 
@@ -59,8 +65,8 @@ public class PurchaseService {
         List<Purchase> allPurchases = purchaseRepo.findAll();
         List<Purchase> allPurchasesByUser = new ArrayList<>();
 
-        for(Purchase p : allPurchases){
-            if(p.getUserId().equals(userId)){
+        for (Purchase p : allPurchases) {
+            if (p.getUserId().equals(userId)) {
                 allPurchasesByUser.add(p);
             }
         }
@@ -69,9 +75,9 @@ public class PurchaseService {
 
     public Purchase findByEventNameDateAndUserId(Event event, String userId) {
         List<Purchase> allPurchasesByUser = findByUserId(userId);
-        for(Purchase p : allPurchasesByUser){
+        for (Purchase p : allPurchasesByUser) {
             Ticket t = tickets.findById(p.getTicketId()).get();
-            if(t.getEventId().equals(event.getId())){
+            if (t.getEventId().equals(event.getId())) {
                 return p;
             }
         }
@@ -82,7 +88,7 @@ public class PurchaseService {
         return purchaseRepo.findByTicketId(ticketId);
     }
 
-    public void export(HttpServletResponse response, String purchaseID) throws IOException {
+    public void export(HttpServletResponse response, String purchaseID) throws IOException, WriterException {
         Purchase purchase = purchaseRepo.findById(purchaseID).get();
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, response.getOutputStream());
@@ -162,6 +168,23 @@ public class PurchaseService {
         body.setAlignment(Paragraph.ALIGN_LEFT);
         document.add(body);
 
+        byte[] pngData = getQRCode(purchaseID, 0, 0);
+        Image image = Image.getInstance(pngData);
+        image.scaleAbsolute(170f, 170f);
+        image.setAlignment(Image.ALIGN_CENTER);
+        document.add(image);
+
         document.close();
+    }
+
+    public byte[] getQRCode(String text, int width, int height) throws WriterException, IOException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+        ByteArrayOutputStream pngOutputStream = new ByteArrayOutputStream();
+        MatrixToImageConfig con = new MatrixToImageConfig(0xFF000002, 0xFF04B4AE);
+        MatrixToImageWriter.writeToStream(bitMatrix, "PNG", pngOutputStream, con);
+        byte[] pngData = pngOutputStream.toByteArray();
+
+        return pngData;
     }
 }
