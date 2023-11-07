@@ -63,7 +63,7 @@ public class TicketController {
     // }
 
     /*------------------------------ Find by Event ID & other Fields ---------------------------------- */
-    @GetMapping("/events/{eventId}/tickets")
+    @GetMapping("/{eventId}/tickets")
     public List<Ticket> getAllTicketsByEventId(@PathVariable(value = "eventId") ObjectId eventId) {
         if (!events.existsById(eventId)) {
             throw new EventNotFoundException(eventId);
@@ -72,7 +72,7 @@ public class TicketController {
     }
 
     // sets boolean sold to true
-    @PutMapping("/events/{eventId}/tickets/{ticketId}/sell")
+    @PutMapping("/{eventId}/{ticketId}/sellTicket")
     public ResponseEntity<?> sellTicket(@PathVariable(value = "eventId") ObjectId eventId,
                                         @PathVariable(value = "ticketId") String ticketId,
                                         @RequestBody Ticket newTicket) {
@@ -92,7 +92,7 @@ public class TicketController {
     }
 
     //get ticket by event ID and category
-    @GetMapping("/events/{eventId}/ticketByCategory/{category}")
+    @GetMapping("/{eventId}/{category}/ticket")
     public Optional <List<Ticket>> getTicketByEventIdAndCategory(@PathVariable(value = "eventId") ObjectId eventId,
                                                                  @PathVariable(value = "category") int category) {
 
@@ -104,7 +104,7 @@ public class TicketController {
     }
 
     //get ticket by event ID and seat Number
-    @GetMapping("/events/{eventId}/ticketBySeat/{seat_num}")
+    @GetMapping("/{eventId}/{seat_num}/ticket")
     public Optional<Ticket> getTicketByEventIdAndSeatNum(@PathVariable(value = "eventId") ObjectId eventId, @PathVariable(value = "seat_num") int seat_num) {
         if (!events.existsById(eventId)) {
             throw new EventNotFoundException(eventId);
@@ -115,7 +115,7 @@ public class TicketController {
     // adds ticket to ticket list in Event
     // http body -> int seatNum, boolean sold, int category
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/events/{eventId}/tickets")
+    @PostMapping("/{eventId}/ticket")
     public Ticket addTicket(@PathVariable(value = "eventId") ObjectId eventId, @RequestBody Ticket ticket) {
         // using "map" to handle the returned Optional object from "findById(eventId)"
         return events.findById(eventId).map(event -> {
@@ -131,7 +131,7 @@ public class TicketController {
      * get ticket by EventName and Category
      * returning a LIST
      */
-    @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}")
+    @GetMapping("{eventName}/{eventDate}/{category}/ticket")
     public List<Ticket> getTicketByEventNameAndCategory(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate,
                                                         @PathVariable(value = "category") int category) {
 
@@ -155,7 +155,7 @@ public class TicketController {
      * Get available tickets by EventName, Date and Category
      * returns a list of integers of seat numbers
      */
-    @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allAvailableSeats")
+    @GetMapping("/{eventName}/{eventDate}/{category}/allAvailableSeats")
     public ResponseEntity<?> getTicketSeatNumberByEventNameAndCategory(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate,
                                                                        @PathVariable(value = "category") int category) {
         Event e = events.findByNameAndDate(eventName, eventDate); //find event by name & date
@@ -182,7 +182,7 @@ public class TicketController {
      * Get all Seat numbers in the category
      * returns a list of integers of seat numbers
      */
-    @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeatNumbers")
+    @GetMapping("/{eventName}/{eventDate}/{category}/allSeatNumbers")
     public ResponseEntity<?> getTicketAllSeatNumberByEventNameAndCategory(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate,
                                                                        @PathVariable(value = "category") int category) {
         Event e = events.findByNameAndDate(eventName, eventDate); //find event by name & date
@@ -207,7 +207,7 @@ public class TicketController {
      * get ticket by event Name, Date, Category and seat number
      * returns a specific Ticket 
      */
-    @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}")
+    @GetMapping("/{eventName}/{eventDate}/{category}/{seatNum}/ticket")
     public ResponseEntity<?> getTicketByEventNameAndCategory(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate,
                                                              @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum) {
 
@@ -225,7 +225,7 @@ public class TicketController {
         return new ResponseEntity<Ticket>(output, HttpStatus.OK);
     }
 
-    @PutMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/cancel")
+    @PutMapping("/{eventName}/{eventDate}/{category}/{seatNum}/cancel")
     public ResponseEntity<?> cancelTicket(@PathVariable(value = "eventName") String eventName, @PathVariable( value = "eventDate") String eventDate,
                                           @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum) {
 
@@ -242,7 +242,7 @@ public class TicketController {
     /*
      * Buying page where user is able to purchase ticket and purchase information will be generated
      */
-    @PostMapping("/events/{eventName}/{eventDate}/{category}/{seatNum}/{userId}")
+    @PostMapping("/{eventName}/{eventDate}/{category}/{seatNum}/{userId}/buy")
     public ResponseEntity<?> purchaseTicket(@PathVariable(value = "eventName") String eventName, @PathVariable( value = "eventDate") String eventDate,
                                             @PathVariable(value = "category") int category, @PathVariable(value = "seatNum") int seatNum,
                                             @PathVariable(value = "userId") String userId) {
@@ -287,6 +287,34 @@ public class TicketController {
         }
         
         return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);
+    }
+
+    /*
+     * After timeout, the user will be removed from the buyingSet and 
+     * we will notify the next user that he can access the buying page
+     * 
+     * Takes in EventName and userId
+     * returns Boolean true
+     */
+    @PutMapping("/home/{eventName}/{userId}")
+    public ResponseEntity<?> sendUsertoHomePage(@PathVariable(value = "userId") String userId, @PathVariable(value = "eventName") String eventName){
+        User user = userRepo.findById(userId).orElse(null);
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid User");
+        }
+
+        //remove user from buySet and set the boolean InBuySet to false
+        buyService.removeUser(eventName, userId);
+        user.setInBuySet(false);
+        userRepo.save(user);
+
+        //find next user and notify them
+        String nextUserId = waitService.getNextUserId(eventName);
+        if(!nextUserId.equals("")){
+            messageServices.notifyUserEnteringBuySet(nextUserId);
+        }
+        
+        return new ResponseEntity<Boolean>(true, HttpStatus.OK);
     }
 
 
