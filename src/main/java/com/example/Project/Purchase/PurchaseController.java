@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("api/v1/")
+@RequestMapping("api/v1/purchases")
 public class PurchaseController {
 
     @Autowired
