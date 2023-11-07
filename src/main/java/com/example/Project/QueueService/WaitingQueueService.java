@@ -102,6 +102,12 @@ public class WaitingQueueService{
         if(allUsers == null){
             return false;
         }
+        if (allUsers.size() == 1){
+            entity.setUserId(new ArrayList<String>());
+            waitQueueRepo.save(entity);
+            return true;
+        }
+
         for(String uId : allUsers ){
             if(uId.equals(userId)){
                 allUsers.remove(uId);
