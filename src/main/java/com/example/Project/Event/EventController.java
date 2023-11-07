@@ -19,7 +19,7 @@ import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/v1/")
+@RequestMapping("/api/v1/event")
 public class EventController {
     @Autowired
     private EventService eventService;
@@ -53,7 +53,7 @@ public class EventController {
     /*
      * Get waiting queue number using the eventName and UserId
      */
-    @GetMapping("/queueNum/{eventName}/{userId}")
+    @GetMapping("/{eventName}/{userId}/getQueueNum")
     public ResponseEntity<?> findQueueNumber(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "userId") String userId){
         Optional<User> optUser = userRepo.findById(userId);
         // User user = userRepo.findById(userId).orElse(null);
@@ -74,7 +74,7 @@ public class EventController {
      * When User clicks buy button at event page
      * Throw user to buying Set or Waiting Queue depending on how many ppl is in the queue
      */
-    @PostMapping("/buy/{userId}/{eventName}")
+    @PostMapping("/{userId}/{eventName}/enqueue")
     public ResponseEntity<?> addToWaitingList(@PathVariable(value = "userId") String userId,
         @PathVariable(value = "eventName") String eventName){
         Optional<User> userOptional = userRepo.findById(userId);
@@ -137,18 +137,18 @@ public class EventController {
 
 
     //find all events
-    @GetMapping("/events")
+    @GetMapping("/getEvents")
     public ResponseEntity<List<Event>> getAllEvents() {
         return new ResponseEntity<List<Event>>(eventService.allEvents(), HttpStatus.OK);
     }
 
-    @GetMapping("/events/getEventById/{id}")
+    @GetMapping("/{id}/getEvent")
     public ResponseEntity<Optional<Event>> getSingleEvent(@PathVariable(value = "id") ObjectId id) {
         return new ResponseEntity<Optional<Event>>(eventService.singleEvent(id), HttpStatus.OK);
     }
 
     //Returns the date
-    @GetMapping("events/getDatesByName/{eventName}")
+    @GetMapping("{eventName}/Dates")
     public ResponseEntity<?> getEventByName(@PathVariable(value = "eventName") String eventName) {
         List<Event> e = eventService.findByName(eventName);
         List<String> dates = new ArrayList<>();
@@ -163,7 +163,7 @@ public class EventController {
         }
 
     }
-    @GetMapping("events/getCategoriesByName/{eventName}")
+    @GetMapping("{eventName}/Categories")
     public ResponseEntity<?> getCategoriesByName(@PathVariable(value = "eventName") String eventName) {
         List<Event> e = eventService.findByName(eventName);
         if(e == null){
@@ -178,7 +178,7 @@ public class EventController {
 
 
     // get by event Date
-    @GetMapping("/events/getEventByDate/{eventDate}")
+    @GetMapping("/{eventDate}/EventNames")
     public ResponseEntity<?> getEventByDate(@PathVariable(value = "eventDate") String eventDate) {
         List<Event> e = eventService.findByDate(eventDate);
         if(e == null){
@@ -192,7 +192,7 @@ public class EventController {
 
     //find by event date and name
     /*COS DATABASE MAY HAVE 2 SAME EVENT BUT DIFFERENT DATE */
-    @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}")
+    @GetMapping("/{eventName}/{eventDate}/getEvent")
     public ResponseEntity<?> getEventByNameDate(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate) {
         Event e = eventService.findByNameAndDate(eventName, eventDate);
         if(e == null){
@@ -205,7 +205,7 @@ public class EventController {
 
     //add event
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/events/add")
+    @PostMapping("/addEvent")
     public Event addEvent(@RequestBody Event event) {
         return eventService.save(event);
     }
