@@ -296,12 +296,16 @@ public class TicketController {
         }
 
         if (buyService.isFull(eventName)){
+            System.out.println("Hello");
             return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);
         } else {
+            System.out.println("Goodybye");
             //find next user and notify them
             String nextUserId = waitService.getNextUserId(eventName);
+            System.out.println(nextUserId);
             if (!nextUserId.equals("")) {
                 messageServices.notifyUserEnteringBuySet(nextUserId);
+                waitService.removeUser(eventName, nextUserId);
             }
 
             return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);

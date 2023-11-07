@@ -12,7 +12,7 @@ public class BuyingQueueService {
     @Autowired
     private BuyingQueueRepository buyQueueRepo;
     
-    private static final int MAX_SIZE = 10; //SET the maximum size to limit how many people can buy
+    private static final int MAX_SIZE = 1; //SET the maximum size to limit how many people can buy
     
     // @CachePut("buySetCache")
     public Set<String> findSet(String eventName){

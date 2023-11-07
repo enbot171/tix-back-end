@@ -31,11 +31,15 @@ public class WaitingQueueService{
     public int findQueueNum(String eventName, String userId){
         WaitingQueueEntity entity = waitQueueRepo.findById(eventName).orElse(null);
         if(entity == null){
+            System.out.println("entity not found");
             return -1;
         }
         List<String> allUserIds = this.findAllUsersInEventQueue(eventName);
         int counter = 0;
-        if(!allUserIds.contains(userId)){return -1;}
+        if(!allUserIds.contains(userId)){
+            System.out.println("user already in");
+            return -1;
+        }
         for(String user : allUserIds){
             counter++;
             if(user.equals(userId)){
@@ -56,6 +60,7 @@ public class WaitingQueueService{
                 l.add(userId);
                 WaitingQueueEntity e = new WaitingQueueEntity(eventName, l , queueNum);
                 waitQueueRepo.save(e);
+                System.out.println("queue made");
             }
         }else{
             l = entity.getUserIds();

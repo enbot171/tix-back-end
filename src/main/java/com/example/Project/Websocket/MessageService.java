@@ -16,7 +16,8 @@ public class MessageService {
     public void notifyUserEnteringBuySet(String userId){
         String message = userId + "is entering the queue!";
         Message toSend = new Message(userId, message, true);
-        simpMessagingTemplate.convertAndSend("/joinBuyset", toSend);
+        System.out.println(toSend.getisInBuySet());
+        simpMessagingTemplate.convertAndSendToUser(userId, "/private", toSend);
     }
 
     /*
