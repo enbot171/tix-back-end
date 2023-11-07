@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.Project.Email.EmailSenderServiceImpl;
 import com.example.Project.Event.Event;
 import com.example.Project.Event.EventNotFoundException;
 import com.example.Project.Event.EventRepository;
@@ -21,6 +22,7 @@ import com.example.Project.Purchase.Purchase;
 import com.example.Project.Purchase.PurchaseService;
 import com.example.Project.QueueService.BuyingQueueService;
 import com.example.Project.QueueService.WaitingQueueService;
+import com.example.Project.User.MessageResponse;
 import com.example.Project.User.User;
 import com.example.Project.User.UserRepository;
 import com.example.Project.Websocket.MessageService;
@@ -38,7 +40,7 @@ public class TicketController {
     private TicketRepository tickets;
     @Autowired
     private PurchaseService purchaseServices;
-    @Autowired 
+    @Autowired
     private UserRepository userRepo;
     @Autowired
     private BuyingQueueService buyService;
@@ -46,6 +48,8 @@ public class TicketController {
     private WaitingQueueService waitService;
     @Autowired
     private MessageService messageServices;
+    @Autowired
+    private EmailSenderServiceImpl emailService;
 
     public TicketController(TicketRepository tickets, EventRepository events, PurchaseService purchaseServices) {
         this.tickets = tickets;
@@ -184,7 +188,7 @@ public class TicketController {
      */
     @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeatNumbers")
     public ResponseEntity<?> getTicketAllSeatNumberByEventNameAndCategory(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate,
-                                                                       @PathVariable(value = "category") int category) {
+                                                                          @PathVariable(value = "category") int category) {
         Event e = events.findByNameAndDate(eventName, eventDate); //find event by name & date
         if (e == null){ throw new EventNotFoundException(eventName);}
         else if (!events.existsById(e.getId())){
@@ -205,7 +209,7 @@ public class TicketController {
 
     /*
      * get ticket by event Name, Date, Category and seat number
-     * returns a specific Ticket 
+     * returns a specific Ticket
      */
     @GetMapping("/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}")
     public ResponseEntity<?> getTicketByEventNameAndCategory(@PathVariable(value = "eventName") String eventName, @PathVariable(value = "eventDate") String eventDate,
@@ -271,22 +275,68 @@ public class TicketController {
 
         //save new purchase enitity created
         purchaseServices.savePurchase(purchase);
-        
+
         //remove user from buySet and set the boolean InBuySet to false
         buyService.removeUser(eventName, userId);
         user.setInBuySet(false);
         userRepo.save(user);
 
-        //notify current user that he is done
-        messageServices.notifyUserLeavingBuySet(userId);
-
-        //find next user and notify them
-        String nextUserId = waitService.getNextUserId(eventName);
-        if(!nextUserId.equals("")){
-            messageServices.notifyUserEnteringBuySet(nextUserId);
+        //send user an email with his purchased tickets, 1 ticket per email
+        try {
+            emailService.sendPurchaseEmail(user, purchase.getId());
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email sent unsuccessfully."));
         }
-        
-        return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);
+
+        //send user an email with his purchased tickets, 1 ticket per email
+        try {
+            emailService.sendPurchaseEmail(user, purchase.getId());
+        } catch (Exception exception) {
+            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email sent unsuccessfully."));
+        }
+
+        if (buyService.isFull(eventName)){
+            System.out.println("Hello");
+            return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);
+        } else {
+            System.out.println("Goodybye");
+            //find next user and notify them
+            String nextUserId = waitService.getNextUserId(eventName);
+            System.out.println(nextUserId);
+            if (!nextUserId.equals("")) {
+                messageServices.notifyUserEnteringBuySet(nextUserId);
+                waitService.removeUser(eventName, nextUserId);
+            }
+
+            return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);
+        }
+    }
+
+
+    @CrossOrigin(origins = "*")
+    @PutMapping("/home/{eventName}/{userId}/deleteAndNotify")
+    public ResponseEntity<?> sendUsertoHomePage(@PathVariable(value = "userId") String userId, @PathVariable(value = "eventName") String eventName){
+        User user = userRepo.findById(userId).orElse(null);
+        if(user == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid User");
+        }
+
+        //remove user from buySet and set the boolean InBuySet to false
+        buyService.removeUser(eventName, userId);
+        user.setInBuySet(false);
+        userRepo.save(user);
+
+        if (buyService.isFull(eventName)){
+            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        } else {
+            //find next user and notify them
+            String nextUserId = waitService.getNextUserId(eventName);
+            if (!nextUserId.equals("")) {
+                messageServices.notifyUserEnteringBuySet(nextUserId);
+            }
+
+            return new ResponseEntity<Boolean>(true, HttpStatus.OK);
+        }
     }
 
 
