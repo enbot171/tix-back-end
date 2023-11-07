@@ -17,7 +17,7 @@ import com.example.Project.User.UserRepository;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("api/v1/purchases")
+@RequestMapping("api/v1/")
 public class PurchaseController {
 
     @Autowired
@@ -34,12 +34,12 @@ public class PurchaseController {
     }
 
     //all purchases
-    @GetMapping("/getPurchases")
+    @GetMapping("/purchases")
     public ResponseEntity<List<Purchase>> getAllPurchases(){
         return new ResponseEntity<List<Purchase>>(purchaseServices.findAll(), HttpStatus.OK);
     }
     //find purchase by ticket id
-    @GetMapping("/{ticketId}/getPurchase")
+    @GetMapping("/purchases/byTicketId/{ticketId}")
     public ResponseEntity<?> getSinglePurchaseByTicketId(@PathVariable (value = "ticketId") String ticketId){
         Ticket ticket = tickets.findById(ticketId).get();
         if(ticket == null){
@@ -67,7 +67,7 @@ public class PurchaseController {
     }
 
     //find purchase by purchase id
-    @GetMapping("{purchaseId}/getPurchase")
+    @GetMapping("purchases/{purchaseId}")
     public ResponseEntity<?> getSinglePurchase(@PathVariable (value = "purchaseId") String purchaseId){
         Purchase purchase = purchaseServices.findSinglePurchase(purchaseId);
         if(purchase == null){
@@ -95,7 +95,7 @@ public class PurchaseController {
     }
 
     //find list of purchases by user ID
-    @GetMapping("/{userId}/getUserPurchases")
+    @GetMapping("/purchases/byUserId/{userId}")
     public ResponseEntity<?> userPurchase(@PathVariable (value = "userId") String userId){
         Optional<User> userOpt = userRepo.findById(userId);
         if(!userOpt.isPresent()){
@@ -109,7 +109,7 @@ public class PurchaseController {
     }
 
     //find specific ticket bought by user id, event name and date
-    @GetMapping("/{userId}/{eventName}/{eventDate}/getUserTicketPurchases")
+    @GetMapping("/purchases/{userId}/{eventName}/{eventDate}")
     public ResponseEntity<?> userTicketPurchase(@PathVariable (value = "userId") String userId, @PathVariable (value = "eventName") String eventName,
                                                 @PathVariable (value = "eventDate") String eventDate){
         Optional<User> userOpt = userRepo.findById(userId);
@@ -126,7 +126,7 @@ public class PurchaseController {
     }
 
     //delete purchases
-    @DeleteMapping("/{purchaseId}/deletePurchase")
+    @DeleteMapping("/purchases/{purchaseId}")
     public ResponseEntity<?> deletePurchase(@PathVariable (value = "purchaseId") String purchaseId){
         if(!purchaseServices.existsById(purchaseId)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchaseId);
