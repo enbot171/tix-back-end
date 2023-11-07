@@ -17,7 +17,7 @@ import com.example.Project.User.UserRepository;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("api/v1/")
+@RequestMapping("api/v1/purchases/")
 public class PurchaseController {
 
     @Autowired
@@ -34,12 +34,12 @@ public class PurchaseController {
     }
 
     //all purchases
-    @GetMapping("/purchases")
+    @GetMapping("")
     public ResponseEntity<List<Purchase>> getAllPurchases(){
         return new ResponseEntity<List<Purchase>>(purchaseServices.findAll(), HttpStatus.OK);
     }
     //find purchase by ticket id
-    @GetMapping("/purchases/byTicketId/{ticketId}")
+    @GetMapping("{ticketId}/Purchase")
     public ResponseEntity<?> getSinglePurchaseByTicketId(@PathVariable (value = "ticketId") String ticketId){
         Ticket ticket = tickets.findById(ticketId).get();
         if(ticket == null){
@@ -67,7 +67,7 @@ public class PurchaseController {
     }
 
     //find purchase by purchase id
-    @GetMapping("purchases/{purchaseId}")
+    @GetMapping("{purchaseId}")
     public ResponseEntity<?> getSinglePurchase(@PathVariable (value = "purchaseId") String purchaseId){
         Purchase purchase = purchaseServices.findSinglePurchase(purchaseId);
         if(purchase == null){
@@ -95,7 +95,7 @@ public class PurchaseController {
     }
 
     //find list of purchases by user ID
-    @GetMapping("/purchases/byUserId/{userId}")
+    @GetMapping("{userId}/Purchase")
     public ResponseEntity<?> userPurchase(@PathVariable (value = "userId") String userId){
         Optional<User> userOpt = userRepo.findById(userId);
         if(!userOpt.isPresent()){
@@ -126,7 +126,7 @@ public class PurchaseController {
     }
 
     //delete purchases
-    @DeleteMapping("/purchases/{purchaseId}")
+    @DeleteMapping("{purchaseId}")
     public ResponseEntity<?> deletePurchase(@PathVariable (value = "purchaseId") String purchaseId){
         if(!purchaseServices.existsById(purchaseId)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchaseId);

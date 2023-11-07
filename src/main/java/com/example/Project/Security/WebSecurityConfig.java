@@ -78,6 +78,7 @@ public class WebSecurityConfig{
                                 // .requestMatchers("/api/v1/events/getEventByNameDate/{eventName}/{eventDate}/ticketByCategory/{category}/allSeats/{seatNum}/purchase/{userId}").permitAll()
                                 // .requestMatchers("/api/v1/purchases/**").permitAll()
                                 .anyRequest().authenticated()
+                                // .anyRequest().permitAll()
                 );
 
         http.authenticationProvider(authenticationProvider());
