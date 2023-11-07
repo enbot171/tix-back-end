@@ -1,5 +1,6 @@
 package com.example.Project.Purchase;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,6 +15,9 @@ import com.example.Project.Ticket.Ticket;
 import com.example.Project.Ticket.TicketRepository;
 import com.example.Project.User.User;
 import com.example.Project.User.UserRepository;
+import com.google.zxing.WriterException;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -29,7 +33,7 @@ public class PurchaseController {
     @Autowired
     private UserRepository userRepo;
 
-    public PurchaseController(PurchaseService purchaseServices){
+    public PurchaseController(PurchaseService purchaseServices) {
         this.purchaseServices = purchaseServices;
     }
 
@@ -38,24 +42,26 @@ public class PurchaseController {
     public ResponseEntity<List<Purchase>> getAllPurchases(){
         return new ResponseEntity<List<Purchase>>(purchaseServices.findAll(), HttpStatus.OK);
     }
+  
     //find purchase by ticket id
     @GetMapping("/{ticketId}/getPurchase")
     public ResponseEntity<?> getSinglePurchaseByTicketId(@PathVariable (value = "ticketId") String ticketId){
+
         Ticket ticket = tickets.findById(ticketId).get();
-        if(ticket == null){
+        if (ticket == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ticket ID: " + ticketId + " does not exist.");
         }
         Purchase purchase = purchaseServices.findByTicketId(ticketId);
-        if(purchase == null){
+        if (purchase == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + ticketId);
         }
         Event event = events.findById(ticket.getEventId()).get();
-        if(event == null){
+        if (event == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + ticket.getEventId());
         }
 
         User user = userRepo.findById(purchase.getUserId()).get();
-        if(user == null){
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchase.getUserId());
         }
 
@@ -70,20 +76,20 @@ public class PurchaseController {
     @GetMapping("{purchaseId}/getPurchase")
     public ResponseEntity<?> getSinglePurchase(@PathVariable (value = "purchaseId") String purchaseId){
         Purchase purchase = purchaseServices.findSinglePurchase(purchaseId);
-        if(purchase == null){
+        if (purchase == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchaseId);
         }
         Ticket ticket = tickets.findById(purchase.getTicketId()).get();
-        if(ticket == null){
+        if (ticket == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchase.getTicketId());
         }
         Event event = events.findById(ticket.getEventId()).get();
-        if(event == null){
+        if (event == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + ticket.getEventId());
         }
 
         User user = userRepo.findById(purchase.getUserId()).get();
-        if(user == null){
+        if (user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchase.getUserId());
         }
 
@@ -98,11 +104,11 @@ public class PurchaseController {
     @GetMapping("/{userId}/getUserPurchases")
     public ResponseEntity<?> userPurchase(@PathVariable (value = "userId") String userId){
         Optional<User> userOpt = userRepo.findById(userId);
-        if(!userOpt.isPresent()){
+        if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User ID does not exist" + userId);
         }
         List<Purchase> purchaseList = purchaseServices.findByUserId(userId);
-        if(purchaseList == null){
+        if (purchaseList == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases for for " + userId);
         }
         return new ResponseEntity<List<Purchase>>(purchaseList, HttpStatus.OK);
@@ -113,12 +119,13 @@ public class PurchaseController {
     public ResponseEntity<?> userTicketPurchase(@PathVariable (value = "userId") String userId, @PathVariable (value = "eventName") String eventName,
                                                 @PathVariable (value = "eventDate") String eventDate){
         Optional<User> userOpt = userRepo.findById(userId);
-        if(!userOpt.isPresent()){
+        if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User ID does not exist" + userId);
         }
         Event event = events.findByNameAndDate(eventName, eventDate);
-        if(event == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Event does not exist" + eventName + ", " + eventDate);
+        if (event == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Event does not exist" + eventName + ", " + eventDate);
         }
         Purchase purchase = purchaseServices.findByEventNameDateAndUserId(event, userId);
         return new ResponseEntity<Purchase>(purchase, HttpStatus.OK);
@@ -143,5 +150,15 @@ public class PurchaseController {
 
         purchaseServices.deletePurchase(toDelete);
         return ResponseEntity.status(HttpStatus.OK).body("Purchase " + purchaseId + " deleted");
+    }
+    @GetMapping("purchases/{purchaseID}/pdf")
+    public void generatePDF(HttpServletResponse response, @PathVariable(value = "purchaseID") String purchaseID)
+            throws IOException, WriterException {
+        response.setContentType("application/pdf");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=ticket.pdf";
+        response.setHeader(headerKey, headerValue);
+
+        this.purchaseServices.export(response, purchaseID);
     }
 }

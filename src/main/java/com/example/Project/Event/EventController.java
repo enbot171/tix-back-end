@@ -96,7 +96,7 @@ public class EventController {
         //check if buying set < 100, if yes, add stright to buy set
         //if no then add to waiting queue
         Set<String> eventSet = buyService.findSet(eventName);
-        if(eventSet.size() < 2){
+        if (eventSet.size() < 1){
             buyService.addToBuyingQueue(eventName, userId);
 
             cfmUser.setInBuySet(true);
