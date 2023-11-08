@@ -20,8 +20,8 @@ import com.google.zxing.WriterException;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@CrossOrigin
-@RequestMapping("api/v1/")
+@CrossOrigin(origins = "*")
+@RequestMapping("api/v1/purchases")
 public class PurchaseController {
 
     @Autowired
@@ -37,14 +37,14 @@ public class PurchaseController {
         this.purchaseServices = purchaseServices;
     }
 
-    // all purchases
-    @GetMapping("/purchases")
-    public ResponseEntity<List<Purchase>> getAllPurchases() {
+    //all purchases
+    @GetMapping("/getAllPurchases")
+    public ResponseEntity<List<Purchase>> getAllPurchases(){
         return new ResponseEntity<List<Purchase>>(purchaseServices.findAll(), HttpStatus.OK);
     }
   
     //find purchase by ticket id
-    @GetMapping("/purchases/byTicketId/{ticketId}") //{ticketId}/getSinglePurchaseByTicketId
+    @GetMapping("/{ticketId}/getPurchase")
     public ResponseEntity<?> getSinglePurchaseByTicketId(@PathVariable (value = "ticketId") String ticketId){
 
         Ticket ticket = tickets.findById(ticketId).get();
@@ -72,9 +72,9 @@ public class PurchaseController {
         return new ResponseEntity<PurchaseInfoResponse>(purchaseInfo, HttpStatus.OK);
     }
 
-    // find purchase by purchase id
-    @GetMapping("purchases/{purchaseId}")
-    public ResponseEntity<?> getSinglePurchase(@PathVariable(value = "purchaseId") String purchaseId) {
+    //find purchase by purchase id
+    @GetMapping("{purchaseId}/getPurchaseFromID")
+    public ResponseEntity<?> getSinglePurchase(@PathVariable (value = "purchaseId") String purchaseId){
         Purchase purchase = purchaseServices.findSinglePurchase(purchaseId);
         if (purchase == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchaseId);
@@ -100,9 +100,9 @@ public class PurchaseController {
         return new ResponseEntity<PurchaseInfoResponse>(purchaseInfo, HttpStatus.OK);
     }
 
-    // find list of purchases by user ID
-    @GetMapping("/purchases/byUserId/{userId}")
-    public ResponseEntity<?> userPurchase(@PathVariable(value = "userId") String userId) {
+    //find list of purchases by user ID
+    @GetMapping("/{userId}/getUserPurchases")
+    public ResponseEntity<?> userPurchase(@PathVariable (value = "userId") String userId){
         Optional<User> userOpt = userRepo.findById(userId);
         if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User ID does not exist" + userId);
@@ -114,11 +114,10 @@ public class PurchaseController {
         return new ResponseEntity<List<Purchase>>(purchaseList, HttpStatus.OK);
     }
 
-    // find specific ticket bought by user id, event name and date
-    @GetMapping("/purchases/{userId}/{eventName}/{eventDate}")
-    public ResponseEntity<?> userTicketPurchase(@PathVariable(value = "userId") String userId,
-            @PathVariable(value = "eventName") String eventName,
-            @PathVariable(value = "eventDate") String eventDate) {
+    //find specific ticket bought by user id, event name and date
+    @GetMapping("/{userId}/{eventName}/{eventDate}/getUserTicketPurchases")
+    public ResponseEntity<?> userTicketPurchase(@PathVariable (value = "userId") String userId, @PathVariable (value = "eventName") String eventName,
+                                                @PathVariable (value = "eventDate") String eventDate){
         Optional<User> userOpt = userRepo.findById(userId);
         if (!userOpt.isPresent()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User ID does not exist" + userId);
@@ -133,10 +132,10 @@ public class PurchaseController {
 
     }
 
-    // delete purchases
-    @DeleteMapping("/purchases/{purchaseId}")
-    public ResponseEntity<?> deletePurchase(@PathVariable(value = "purchaseId") String purchaseId) {
-        if (!purchaseServices.existsById(purchaseId)) {
+    //delete purchases
+    @DeleteMapping("/{purchaseId}/deletePurchase")
+    public ResponseEntity<?> deletePurchase(@PathVariable (value = "purchaseId") String purchaseId){
+        if(!purchaseServices.existsById(purchaseId)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No purchases found in " + purchaseId);
         }
         Purchase toDelete = purchaseServices.findSinglePurchase(purchaseId);
