@@ -29,13 +29,8 @@ import com.example.Project.Websocket.MessageService;
 
 
 @RestController
-<<<<<<< HEAD
 @CrossOrigin
-@RequestMapping("/api/v1/")
-=======
-@CrossOrigin(origins = "*")
 @RequestMapping("/api/v1/ticket")
->>>>>>> 1b24488c304259af2ca535ac3ae1ebf187f99b02
 public class TicketController {
 
     // private static final Logger logger = LoggerFactory.getLogger(TicketController.class);

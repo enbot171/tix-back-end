@@ -151,7 +151,7 @@ public class PurchaseController {
         purchaseServices.deletePurchase(toDelete);
         return ResponseEntity.status(HttpStatus.OK).body("Purchase " + purchaseId + " deleted");
     }
-    @GetMapping("purchases/{purchaseID}/pdf")
+    @GetMapping("{purchaseID}/pdf")
     public void generatePDF(HttpServletResponse response, @PathVariable(value = "purchaseID") String purchaseID)
             throws IOException, WriterException {
         response.setContentType("application/pdf");
