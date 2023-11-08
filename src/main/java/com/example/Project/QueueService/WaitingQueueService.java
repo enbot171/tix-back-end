@@ -36,10 +36,12 @@ public class WaitingQueueService{
         }
         List<String> allUserIds = this.findAllUsersInEventQueue(eventName);
         int counter = 0;
+
         if(!allUserIds.contains(userId)){
             System.out.println("user already in");
             return -1;
         }
+
         for(String user : allUserIds){
             counter++;
             if(user.equals(userId)){
@@ -56,13 +58,13 @@ public class WaitingQueueService{
         if(entity == null){
             l = new ArrayList<>();
             queueNum = 1;            
-            if(!l.contains(userId)){
+            if (!l.contains(userId)){
                 l.add(userId);
                 WaitingQueueEntity e = new WaitingQueueEntity(eventName, l , queueNum);
                 waitQueueRepo.save(e);
                 System.out.println("queue made");
             }
-        }else{
+        } else{
             l = entity.getUserIds();
             queueNum = entity.getQueueNum();
             if(!l.contains(userId)){
@@ -82,7 +84,7 @@ public class WaitingQueueService{
         if(entity == null){
             return "";
         }
-        if(entity.getUserIds() == null){
+        if(entity.getUserIds().isEmpty()){
             return "";
         }
             
