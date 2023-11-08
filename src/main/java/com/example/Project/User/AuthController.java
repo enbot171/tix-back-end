@@ -22,7 +22,7 @@ import java.util.Optional;
 
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     @Autowired

@@ -1,38 +1,58 @@
-package com.example.Project.Security;
+// package com.example.Project.Security;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
+// import org.springframework.web.cors.CorsConfiguration;
+// import org.springframework.web.cors.CorsConfigurationSource;
+// import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+// import org.springframework.web.filter.CorsFilter;
+// import org.springframework.web.servlet.config.annotation.CorsRegistry;
+// import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+// import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
+// import jakarta.annotation.PostConstruct;
 
-@Configuration
-public class CorsConfig {
+// import java.util.Arrays;
 
-    @Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
+// @Configuration
+// @EnableWebMvc
+// public class CorsConfig implements WebMvcConfigurer{
+//     @Override
+//   public void addCorsMappings(CorsRegistry registry) {
 
-        // Allow requests from this origin (e.g., http://localhost:3000)
-        config.addAllowedOrigin("http://localhost:3000");
+//     registry.addMapping("/**")
+//       .allowedOrigins("localhost:3000","https://cs203front.azurewebsites.net")
+//       .allowedMethods("GET", "POST", "PUT", "DELETE")
+//       .allowedHeaders("*")
+//       .exposedHeaders("*")
+//       .allowCredentials(true).maxAge(3600);
 
-        config.addAllowedMethod("*");
+//     // Add more mappings...
+//   }
+    
+//     // @Bean
+//     // public CorsFilter corsFilter() {
+        
+//     //     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//     //     CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedMethods(Arrays.asList("POST", "GET", "OPTIONS", "DELETE", "PUT"));
+//     //     // Allow requests from this origin (e.g., http://localhost:3000)
+//     //     config.addAllowedOrigin("*");
 
-        config.addAllowedHeader("*");
+//     //     config.addAllowedMethod("*");
 
-        config.addExposedHeader("Set-Cookie");
+//     //     config.setAllowedMethods(Arrays.asList("POST", "GET", "OPTIONS", "DELETE", "PUT"));
 
-        config.setAllowCredentials(true);
+//     //     config.addAllowedHeader("*");
 
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
-}
+//     //     config.addExposedHeader("Set-Cookie");
+
+//     //     config.setAllowCredentials(true);
+
+//     //     source.registerCorsConfiguration("/**", config);
+//     //     return new CorsFilter(source);
+//     // }
+// }
 
 
 

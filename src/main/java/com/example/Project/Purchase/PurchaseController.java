@@ -20,7 +20,7 @@ import com.google.zxing.WriterException;
 import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RequestMapping("api/v1/")
 public class PurchaseController {
 

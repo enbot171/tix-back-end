@@ -31,7 +31,7 @@ public class EmailSenderServiceImpl implements EmailSenderService{
         String verificationCode = user.getId();
         user.setVerificationCode(verificationCode);
 
-        String verifyURL = "http://localhost:8081/api/v1/auth/verify?code=" + verificationCode; // not sure if need change after deployment
+        String verifyURL = "https://cs203back.azurewebsites.net/api/v1/auth/verify?code=" + verificationCode; // not sure if need change after deployment
         subject = "Verify your Email";
 
         String body = "<p>Dear " + user.getFullname() + ",</p>";
@@ -54,7 +54,7 @@ public class EmailSenderServiceImpl implements EmailSenderService{
 
         MimeMessage message = mailSender.createMimeMessage();
 
-        String downloadURL = "http://localhost:8081/api/v1/purchases/" + purchaseID + "/pdf"; 
+        String downloadURL = "https://cs203back.azurewebsites.net/api/v1/purchases/" + purchaseID + "/pdf"; 
         subject = "Thank You for your Purchase";
 
         String body = "<p>Dear " + user.getFullname() + ",</p>";

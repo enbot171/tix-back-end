@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import com.stripe.model.Charge;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin
 @RequestMapping("/api/payment")
 public class PaymentController {
 

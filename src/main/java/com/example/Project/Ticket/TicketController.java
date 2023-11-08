@@ -29,7 +29,7 @@ import com.example.Project.Websocket.MessageService;
 
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin
 @RequestMapping("/api/v1/")
 public class TicketController {
 
@@ -313,7 +313,7 @@ public class TicketController {
     }
 
 
-    @CrossOrigin(origins = "*")
+    
     @PutMapping("/home/{eventName}/{userId}/deleteAndNotify")
     public ResponseEntity<?> sendUsertoHomePage(@PathVariable(value = "userId") String userId, @PathVariable(value = "eventName") String eventName){
         User user = userRepo.findById(userId).orElse(null);
