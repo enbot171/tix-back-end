@@ -103,7 +103,7 @@ public class EventController {
 
             userRepo.save(cfmUser);
             return new ResponseEntity<Boolean>(true, HttpStatus.OK);
-        }else{
+        } else{
             waitService.addWaitingQueues(eventName, userId);
             // int queueNumber = waitService.findQueueNum(eventName, userId);
             cfmUser.setInBuySet(false);
