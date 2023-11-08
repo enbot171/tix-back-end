@@ -38,7 +38,7 @@ public class PurchaseController {
     }
 
     //all purchases
-    @GetMapping("/getPurchases")
+    @GetMapping("/getAllPurchases")
     public ResponseEntity<List<Purchase>> getAllPurchases(){
         return new ResponseEntity<List<Purchase>>(purchaseServices.findAll(), HttpStatus.OK);
     }
@@ -73,7 +73,7 @@ public class PurchaseController {
     }
 
     //find purchase by purchase id
-    @GetMapping("{purchaseId}/getPurchase")
+    @GetMapping("{purchaseId}/getPurchaseFromID")
     public ResponseEntity<?> getSinglePurchase(@PathVariable (value = "purchaseId") String purchaseId){
         Purchase purchase = purchaseServices.findSinglePurchase(purchaseId);
         if (purchase == null) {

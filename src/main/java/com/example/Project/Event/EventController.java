@@ -148,7 +148,7 @@ public class EventController {
     }
 
     //Returns the date
-    @GetMapping("events/getDatesByName/{eventName}")
+    @GetMapping("/{eventName}/getDatesByName")
     public ResponseEntity<?> getEventByName(@PathVariable(value = "eventName") String eventName) {
         List<Event> e = eventService.findByName(eventName);
         List<String> dates = new ArrayList<>();
